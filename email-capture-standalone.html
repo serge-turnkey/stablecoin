@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Email Capture - Blockchain Selector App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    @font-face {
+      font-family: 'ABC Favorit';
+      src: url('font/ABCFavorit-Regular.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+        'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: white;
+    }
+    
+    #root {
+      width: 100%;
+      min-height: 100vh;
+    }
+    
+    h1 {
+      font-family: 'ABC Favorit', sans-serif;
+    }
+    
+    button {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    button:focus {
+      outline: none;
+    }
+    
+    button p {
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+      pointer-events: none;
+    }
+    
+    ::selection {
+      background: transparent;
+    }
+    
+    ::-moz-selection {
+      background: transparent;
+    }
+    
+    /* App Container */
+    .app-container {
+      background-color: white;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+    }
+    
+    /* Navigation Bar */
+    .nav-bar {
+      border-bottom: 2px solid rgba(0, 0, 0, 0.08);
+      display: flex;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      align-items: center;
+      justify-content: space-between;
+      line-height: 1.5;
+      font-size: 14px;
+      letter-spacing: -0.14px;
+      width: 100%;
+    }
+    
+    .nav-item {
+      display: flex;
+      flex: 1 0 0;
+      gap: 12px;
+      align-items: center;
+      justify-content: center;
+      padding: 16px 20px;
+      color: #505454;
+      opacity: 0.5;
+    }
+    
+    .nav-item.active {
+      border-bottom: 2px solid #4c48ff;
+      color: #4c48ff;
+      margin-bottom: -2px;
+      opacity: 1;
+    }
+    
+    .nav-item.completed {
+      border-bottom: 2px solid #4c48ff;
+      color: #4c48ff;
+      margin-bottom: -2px;
+      opacity: 1;
+    }
+    
+    .nav-item p {
+      font-size: 14px;
+    }
+    
+    /* Main Content */
+    .main-content {
+      display: flex;
+      flex-direction: column;
+      gap: 36px;
+      align-items: flex-start;
+      padding: 40px 48px;
+      width: 100%;
+      flex: 1;
+    }
+    
+    .content-header {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      align-items: flex-start;
+      width: 100%;
+    }
+    
+    .content-title {
+      font-family: 'ABC Favorit', sans-serif;
+      line-height: 1.1;
+      color: #111;
+      font-size: 38px;
+      letter-spacing: -1.9px;
+      width: 100%;
+      font-weight: 400;
+    }
+    
+    .content-description {
+      font-family: 'Inter', sans-serif;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #505454;
+      font-size: 16px;
+      letter-spacing: -0.16px;
+      width: 100%;
+    }
+    
+    /* Email Input Styles */
+    .email-input-container {
+      width: 100%;
+      max-width: 100%;
+    }
+    
+    .email-input {
+      width: 100%;
+      padding: 16px 20px;
+      font-family: 'Inter', sans-serif;
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 1.5;
+      color: #111;
+      background-color: white;
+      border: 1px solid rgba(178, 183, 188, 0.5);
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.2s;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+      user-select: text;
+    }
+    
+    .email-input::placeholder {
+      color: rgba(80, 84, 84, 0.6);
+      font-weight: 400;
+    }
+    
+    .email-input:focus {
+      border-color: #3f3cff;
+      background-color: white;
+    }
+    
+    .email-input:hover:not(:focus) {
+      border-color: rgba(178, 183, 188, 0.7);
+    }
+    
+    .email-input.error {
+      border-color: #DB383E;
+    }
+    
+    .email-input.error:focus {
+      border-color: #DB383E;
+    }
+    
+    .email-error-message {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      color: #DB383E;
+      margin-top: 8px;
+      line-height: 1.4;
+    }
+    
+    /* Footer */
+    .footer {
+      border-top: 2px solid rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 48px;
+      width: 100%;
+    }
+    
+    .back-button {
+      background-color: rgba(0, 0, 0, 0.06);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+      padding: 9px 14px 10px;
+      border-radius: 100px;
+      opacity: 0;
+      pointer-events: none;
+      border: none;
+      outline: none;
+      cursor: default;
+    }
+    
+    .back-button.enabled {
+      opacity: 1;
+      pointer-events: auto;
+      cursor: pointer;
+      background-color: rgba(0, 0, 0, 0.06);
+      border: none;
+      outline: none;
+    }
+    
+    .back-button-icon-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .back-button-icon {
+      position: relative;
+      width: 18px;
+      height: 18px;
+    }
+    
+    .back-button-icon img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .back-button-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      line-height: 1.3;
+      color: #111;
+      font-size: 14px;
+      letter-spacing: -0.28px;
+    }
+    
+    .continue-button {
+      background-color: #111;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      padding: 18px 30px;
+      border-radius: 100px;
+      opacity: 0.2;
+      cursor: not-allowed;
+      border: none;
+      transition: opacity 0.2s;
+    }
+    
+    .continue-button.enabled {
+      opacity: 1;
+      cursor: pointer;
+    }
+    
+    .continue-button-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      line-height: 1.5;
+      font-size: 16px;
+      color: white;
+      letter-spacing: -0.16px;
+    }
+    
+    .continue-button-icon {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+    
+    .continue-button-icon img {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+    
+    /* Responsive Styles */
+    @media (max-width: 768px) {
+      .nav-item {
+        flex-direction: column !important;
+        gap: 4px !important;
+        padding: 8px 12px !important;
+        font-size: 12px !important;
+        letter-spacing: -0.12px !important;
+      }
+      
+      .nav-item p {
+        font-size: 12px !important;
+      }
+      
+      .main-content {
+        padding: 40px 20px !important;
+      }
+      
+      .footer {
+        padding: 20px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const arrowRightIcon = "img/arrow-right.svg";
+    const arrowLeftIcon = "img/arrow-left.svg";
+
+    function EmailCapture() {
+      const [email, setEmail] = useState('');
+      const [emailTouched, setEmailTouched] = useState(false);
+
+      const isValidEmail = (email) => {
+        if (!email.trim()) return false;
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return emailRegex.test(email);
+      };
+
+      const handleEmailChange = (e) => {
+        setEmail(e.target.value);
+      };
+
+      const handleEmailBlur = () => {
+        setEmailTouched(true);
+      };
+
+      const handleContinue = () => {
+        if (isValidEmail(email)) {
+          console.log('Email entered:', email);
+          alert('Continue clicked! Email: ' + email);
+        } else {
+          setEmailTouched(true);
+        }
+      };
+
+      const showError = emailTouched && email.trim().length > 0 && !isValidEmail(email);
+
+      const handleBack = () => {
+        console.log('Back clicked');
+      };
+
+      return (
+        <div className="app-container">
+          {/* Navigation Bar */}
+          <div className="nav-bar">
+            <div className="nav-item completed">
+              <p>①</p>
+              <p><nobr>Use case</nobr></p>
+            </div>
+            <div className="nav-item completed">
+              <p>②</p>
+              <p>Priorities</p>
+            </div>
+            <div className="nav-item completed">
+              <p>③</p>
+              <p>Region</p>
+            </div>
+            <div className="nav-item completed">
+              <p>④</p>
+              <p>Stablecoin</p>
+            </div>
+            <div className="nav-item active">
+              <p>⑤</p>
+              <p>Results</p>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="main-content">
+            <div className="content-header">
+              <h1 className="content-title">
+                Enter email to continue
+              </h1>
+              <p className="content-description">
+                Share your work email to get the results
+              </p>
+            </div>
+
+            {/* Email Input */}
+            <div className="email-input-container">
+              <input
+                type="email"
+                className={`email-input ${showError ? 'error' : ''}`}
+                placeholder="Work email address*"
+                value={email}
+                onChange={handleEmailChange}
+                onBlur={handleEmailBlur}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && isValidEmail(email)) {
+                    handleContinue();
+                  }
+                }}
+              />
+              {showError && (
+                <p className="email-error-message">
+                  Please enter a valid email address
+                </p>
+              )}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="footer">
+            <button 
+              className="back-button enabled"
+              onClick={handleBack}
+            >
+              <div className="back-button-icon-wrapper">
+                <div className="back-button-icon">
+                  <img alt="" src={arrowLeftIcon} />
+                </div>
+              </div>
+              <p className="back-button-text">
+                Back
+              </p>
+            </button>
+            <button 
+              className={`continue-button ${isValidEmail(email) ? 'enabled' : ''}`}
+              onClick={handleContinue}
+              disabled={!isValidEmail(email)}
+            >
+              <p className="continue-button-text">
+                Continue
+              </p>
+              <div className="continue-button-icon">
+                <img alt="" src={arrowRightIcon} />
+              </div>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<EmailCapture />);
+  </script>
+</body>
+</html>

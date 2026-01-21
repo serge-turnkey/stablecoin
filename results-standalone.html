@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results - Blockchain Selector App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="src/index.css">
+</head>
+<body>
+  <div id="root"></div>
+
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script type="text/babel">
+    const { useState } = React;
+
+    const arrowLeftIcon = "img/arrow-left.svg";
+    const arrowRightIcon = "img/arrow-right.svg";
+    const refreshIcon = "img/refresh.svg";
+
+    // Blockchain logo mapping
+    const blockchainLogos = {
+      'Solana': 'chains/solana.png',
+      'Arbitrum': 'chains/arbitrum.png',
+      'Optimism': 'chains/optimism.png',
+      'Stellar': 'chains/stellar.png',
+    };
+
+    function Results() {
+      const [resultsShown, setResultsShown] = useState(true);
+
+      const handleBack = () => {
+        console.log('Back clicked');
+      };
+
+      const handleStartOver = () => {
+        window.location.href = 'index-standalone.html';
+      };
+
+      const blockchainResults = [
+        {
+          rank: 1,
+          name: 'Solana',
+          isBestMatch: true,
+          score: 80,
+          description: 'We ranked Solana highest because it scored best under your selected priorities, with the strongest contribution from: Fees and predictability, Speed and UX, Liquidity and off-ramps.',
+          keyStrengths: [
+            'Very fast finality',
+            'Minimal fees',
+            'Strong throughput'
+          ],
+          considerations: [
+            'Operational incident history',
+            'Non-EVM architecture',
+            'Ecosystem fit varies by stack'
+          ]
+        },
+        {
+          rank: 2,
+          name: 'Arbitrum',
+          isBestMatch: false,
+          score: 60,
+          description: 'We ranked Solana highest because it scored best under your selected priorities, with the strongest contribution from: Fees and predictability, Speed and UX, Liquidity and off-ramps.',
+          keyStrengths: [
+            'Very fast finality',
+            'Minimal fees',
+            'Strong throughput'
+          ],
+          considerations: [
+            'Operational incident history',
+            'Non-EVM architecture',
+            'Ecosystem fit varies by stack'
+          ]
+        },
+        {
+          rank: 3,
+          name: 'Optimism',
+          isBestMatch: false,
+          score: 60,
+          description: 'This option scored lower given your priorities, mainly due to tradeoffs across: Fees and predictability, Speed and UX, Reliability under load.',
+          keyStrengths: [
+            'Strong Ethereum alignment',
+            'Lower fees than L1',
+            'Growing app ecosystem'
+          ],
+          considerations: [
+            'L2 complexity (bridging, exits)',
+            'Sequencer assumptions',
+            'App liquidity can be uneven'
+          ]
+        },
+        {
+          rank: 4,
+          name: 'Stellar',
+          isBestMatch: false,
+          score: 40,
+          description: 'This option scored lower given your priorities, mainly due to tradeoffs across: Fees and predictability, Speed and UX, Reliability under load.',
+          keyStrengths: [
+            'Strong exchange adjacency',
+            'Lower fees than L1',
+            'Fast UX for consumer apps'
+          ],
+          considerations: [
+            'L2 complexity (bridging, exits)',
+            'Sequencer assumptions',
+            'Maturity still evolving'
+          ]
+        }
+      ];
+
+      return (
+        <div className="app-container">
+          {/* Navigation Bar */}
+          <div className="nav-bar">
+            <div className="nav-item completed">
+              <p>①</p>
+              <p><nobr>Use case</nobr></p>
+            </div>
+            <div className="nav-item completed">
+              <p>②</p>
+              <p>Priorities</p>
+            </div>
+            <div className="nav-item completed">
+              <p>③</p>
+              <p>Region</p>
+            </div>
+            <div className="nav-item completed">
+              <p>④</p>
+              <p>Stablecoin</p>
+            </div>
+            <div className="nav-item active">
+              <p>⑤</p>
+              <p>Results</p>
+            </div>
+          </div>
+
+          {/* Main Content */}
+          <div className="main-content">
+            <div className="content-header">
+              <h1 className="content-title">
+                Your top blockchain matches
+              </h1>
+              <p className="content-description">
+                Scored across fees, reliability, regulatory fit, liquidity and off-ramps, speed, and decentralization
+              </p>
+            </div>
+
+            {/* Results Cards */}
+            <div className="results-container">
+              {blockchainResults.map((result) => (
+                <div key={result.rank} className={`result-card ${result.isBestMatch ? 'best-match' : ''}`}>
+                  {/* Top Section */}
+                  <div className="result-header-row">
+                    <div className="result-header-left">
+                      <div className="result-rank">{result.rank}.</div>
+                      <div className="result-logo-container">
+                        <div className={`result-logo ${result.name.toLowerCase()}`}>
+                          {blockchainLogos[result.name] ? (
+                            <img 
+                              src={blockchainLogos[result.name]} 
+                              alt={`${result.name} logo`}
+                              className="result-logo-img"
+                            />
+                          ) : (
+                            result.name.charAt(0)
+                          )}
+                        </div>
+                      </div>
+                      <div className="result-name-wrapper">
+                        <h2 className="result-name">{result.name}</h2>
+                        {result.isBestMatch && (
+                          <span className="best-match-badge">Best Match</span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="result-score-wrapper">
+                      <span className="result-score-label">Score</span>
+                      <div className="result-score-circle">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                          {/* Background circle */}
+                          <circle cx="20" cy="20" r="19" stroke="#E0E0E0" strokeWidth="2" />
+                          {/* Progress circle */}
+                          <circle
+                            cx="20"
+                            cy="20"
+                            r="19"
+                            stroke="#3F3CFF"
+                            strokeWidth="2"
+                            strokeDasharray={`${2 * Math.PI * 19}`}
+                            strokeDashoffset={`${2 * Math.PI * 19 * (1 - result.score / 100)}`}
+                            strokeLinecap="round"
+                            transform="rotate(-90 20 20)"
+                          />
+                        </svg>
+                        <span className="result-score-value">{result.score}</span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Separator */}
+                  <div className="result-separator"></div>
+                  
+                  {/* Bottom Section */}
+                  <div className="result-content-row">
+                    <div className="result-description-column">
+                      <p className="result-description">{result.description}</p>
+                    </div>
+                    <div className="result-detail-column">
+                      <h3 className="result-detail-title">Key strengths</h3>
+                      <ul className="result-detail-list">
+                        {result.keyStrengths.map((strength, idx) => (
+                          <li key={idx} className="result-strength-item">
+                            <img src="img/check-18.svg" alt="" className="result-checkmark" />
+                            {strength}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div className="result-detail-column">
+                      <h3 className="result-detail-title">Considerations</h3>
+                      <ul className="result-detail-list">
+                        {result.considerations.map((consideration, idx) => (
+                          <li key={idx} className="result-consideration-item">
+                            <img src="img/minus-18.svg" alt="" className="result-dash" />
+                            {consideration}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Footer */}
+          <div className="footer">
+            <div></div>
+            <button 
+              className="start-over-button"
+              onClick={handleStartOver}
+            >
+              <img src={refreshIcon} alt="" className="start-over-button-icon" />
+              <p className="start-over-button-text">
+                Start Over
+              </p>
+            </button>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<Results />);
+  </script>
+</body>
+</html>
