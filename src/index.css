@@ -527,11 +527,10 @@ button p {
 }
 
 .result-card.best-match {
-  
   border-radius: 12px;
   border: 2px solid #3F3CFF;
   border-image: none;
-  background: #F8F7FC;
+  background: #F9F7FE;
 }
 
 /* Top Section - Header Row */
@@ -691,6 +690,12 @@ button p {
   line-height: 1.4;
 }
 
+@media (max-width: 768px) {
+  .result-score-label {
+    display: none;
+  }
+}
+
 .result-score-circle {
   position: relative;
   width: 40px;
@@ -752,6 +757,22 @@ button p {
   width: 100%;
 }
 
+.result-description-section {
+  display: none;
+  flex-direction: column;
+  width: 100%;
+  margin-top: 16px;
+}
+
+.result-strengths-section,
+.result-considerations-section {
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+  width: 100%;
+}
+
 .result-description {
   font-family: 'Inter', sans-serif;
   font-size: 16px;
@@ -762,6 +783,7 @@ button p {
   width: 100%;
   height: fit-content;
 }
+
 
 .result-detail-column {
   display: flex;
@@ -957,21 +979,123 @@ button p {
   }
   
   .result-card {
-    padding: 24px !important;
+    padding: 20px !important;
+    border-radius: 12px !important;
   }
   
   .result-header-row {
-    flex-direction: column !important;
-    align-items: flex-start !important;
-    gap: 16px !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 12px !important;
+    margin-bottom: 0 !important;
+  }
+  
+  .result-header-left {
+    flex: 1 !important;
+    gap: 12px !important;
+  }
+  
+  .result-rank {
+    font-size: 16px !important;
+    width: auto !important;
+  }
+  
+  .result-logo-container {
+    width: 32px !important;
+    height: 32px !important;
+  }
+  
+  .result-name {
+    font-size: 16px !important;
+  }
+  
+  .best-match-badge {
+    font-size: 11px !important;
+    padding: 2px 6px !important;
   }
   
   .result-score-wrapper {
     align-items: center !important;
+    gap: 0 !important;
+  }
+  
+  .result-score-circle {
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  .result-score-value {
+    font-size: 12px !important;
+    font-weight: 500 !important;
+  }
+  
+  .result-description-section {
+    margin-top: 16px !important;
+  }
+  
+  .result-description {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
+  }
+  
+  .result-strengths-section,
+  .result-considerations-section {
+    margin-top: 20px !important;
+    gap: 12px !important;
+  }
+  
+  .result-detail-title {
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    color: #111 !important;
+  }
+  
+  .result-strength-item,
+  .result-consideration-item {
+    font-size: 14px !important;
+    line-height: 1.5 !important;
   }
   
   .result-content-row {
-    
-    gap: 24px !important;
+    display: none !important;
+  }
+  
+  .result-detail-column {
+    display: none !important;
+  }
+  
+  .result-separator {
+    display: none !important;
+  }
+  
+  .result-description-section {
+    display: flex !important;
+  }
+  
+  .result-strengths-section,
+  .result-considerations-section {
+    display: flex !important;
+  }
+  
+  .footer {
+    padding: 16px 20px !important;
+    gap: 12px !important;
+  }
+  
+  .back-button.enabled {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 12px 20px !important;
+  }
+  
+  .continue-button.enabled {
+    flex: 1 !important;
+    justify-content: center !important;
+    padding: 12px 20px !important;
+  }
+  
+  .continue-button-text {
+    font-size: 14px !important;
   }
 }

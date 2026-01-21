@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import arrowLeftIcon from '../img/arrow-left.svg'
+import arrowRightIcon from '../img/arrow-right.svg'
 import checkIcon from '../img/check-18.svg'
 import minusIcon from '../img/minus-18.svg'
 import refreshIcon from '../img/refresh.svg'
@@ -345,7 +346,7 @@ export default function Results({ onBack, formData, onStartOver }) {
               {/* Separator */}
               <div className="result-separator"></div>
               
-              {/* Bottom Section */}
+              {/* Desktop Layout - Bottom Section */}
               <div className="result-content-row">
                 <div className="result-description-column">
                   <p className="result-description">{result.description}</p>
@@ -372,6 +373,37 @@ export default function Results({ onBack, formData, onStartOver }) {
                     ))}
                   </ul>
                 </div>
+              </div>
+              
+              {/* Mobile Layout - Vertical Sections */}
+              <div className="result-description-section">
+                <p className="result-description">{result.description}</p>
+              </div>
+              
+              {/* Key Strengths */}
+              <div className="result-strengths-section">
+                <h3 className="result-detail-title">Key strengths</h3>
+                <ul className="result-detail-list">
+                  {result.keyStrengths && result.keyStrengths.map((strength, idx) => (
+                    <li key={idx} className="result-strength-item">
+                      <img src={checkIcon} alt="" className="result-checkmark" />
+                      {strength}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              
+              {/* Considerations */}
+              <div className="result-considerations-section">
+                <h3 className="result-detail-title">Considerations</h3>
+                <ul className="result-detail-list">
+                  {result.considerations && result.considerations.map((consideration, idx) => (
+                    <li key={idx} className="result-consideration-item">
+                      <img src={minusIcon} alt="" className="result-dash" />
+                      {consideration}
+                    </li>
+                  ))}
+                </ul>
               </div>
             </div>
           ))}
