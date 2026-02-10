@@ -144,6 +144,22 @@ export default function Results({ onBack, formData, onStartOver }) {
     }
   }, [formData]);
 
+  // Push dataLayer event when results are successfully loaded
+  useEffect(() => {
+    if (!isLoading && blockchainResults.length > 0 && !error) {
+      // Push to dataLayer for GTM tracking
+      window.dataLayer = window.dataLayer || [];
+      window.dataLayer.push({
+        'event': 'results_viewed',
+        'user_email': formData.email,
+        'top_blockchain': blockchainResults[0]?.name,
+        'top_blockchain_score': blockchainResults[0]?.score,
+        'use_case': formData.useCase
+      });
+      console.log('DataLayer event pushed: results_viewed');
+    }
+  }, [isLoading, blockchainResults, error, formData.email, formData.useCase]);
+
   if (isLoading) {
     return (
       <div className="app-container">
