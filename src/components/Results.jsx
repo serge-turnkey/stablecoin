@@ -157,6 +157,12 @@ export default function Results({ onBack, formData, onStartOver }) {
         'use_case': formData.useCase
       });
       console.log('DataLayer event pushed: results_viewed');
+      
+      // Send postMessage to parent window (for iframe embedding on turnkey.com)
+      window.parent.postMessage({
+        event: 'results_viewed' 
+      }, 'https://www.turnkey.com');
+      console.log('PostMessage sent to parent window');
     }
   }, [isLoading, blockchainResults, error, formData.email, formData.useCase]);
 
