@@ -9,6 +9,7 @@ const regions = [
   { id: 'latin-america', label: 'South America' },
   { id: 'asia', label: 'Asia' },
   { id: 'africa', label: 'Africa' },
+  { id: 'australia', label: 'Australia' },
   { id: 'global', label: 'Global' },
 ];
 
