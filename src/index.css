@@ -249,7 +249,7 @@ button p {
 .region-card {
   background-color: rgba(178, 183, 188, 0.4);
   display: flex;
-  flex: 1 0 0;
+  flex: 0 0 calc(50% - 12px);
   flex-direction: row;
   gap: 4px;
   align-items: center;
@@ -260,7 +260,6 @@ button p {
   border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
-  max-width: calc(50% - 12px);
 }
 
 .region-card:hover {
