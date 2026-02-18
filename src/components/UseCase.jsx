@@ -8,7 +8,7 @@ const useCases = [
   { id: 3, title: 'Remittance', description: 'Cross-border' },
   { id: 4, title: 'Payroll', description: 'Pay employees' },
   { id: 5, title: 'DeFi', description: 'Financial products' },
-  { id: 6, title: 'Other', description: 'General Products' },
+  { id: 6, title: 'Other', description: 'General products' },
 ];
 
 export default function UseCase({ onContinue }) {
