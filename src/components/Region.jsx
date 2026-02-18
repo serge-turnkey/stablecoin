@@ -6,7 +6,7 @@ import checkIcon from '../img/check.svg'
 const regions = [
   { id: 'north-america', label: 'North America' },
   { id: 'europe', label: 'Europe' },
-  { id: 'latin-america', label: 'Latin America' },
+  { id: 'latin-america', label: 'South America' },
   { id: 'asia', label: 'Asia' },
   { id: 'africa', label: 'Africa' },
   { id: 'global', label: 'Global' },
