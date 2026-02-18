@@ -62,12 +62,14 @@ function App() {
 
   const handleStartOver = () => {
     setCurrentStep(1);
+    // Preserve the email from localStorage when starting over
+    const savedEmail = localStorage.getItem('userEmail');
     setFormData({
       useCase: null,
       priorities: null,
       region: null,
       stablecoin: null,
-      email: null,
+      email: savedEmail || null,
     });
   };
 
