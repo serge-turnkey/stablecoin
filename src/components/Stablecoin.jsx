@@ -4,7 +4,7 @@ import arrowLeftIcon from '../img/arrow-left.svg'
 import checkIcon from '../img/check.svg'
 
 const stablecoins = [
-  { id: 'usdc', title: 'USDC', description: 'Online payments' },
+  { id: 'usdc', title: 'USDC', description: 'Circle' },
   { id: 'usdt', title: 'USDT', description: 'Tether' },
   { id: 'dai', title: 'DAI', description: 'MakerDAO' },
   { id: 'usde', title: 'USDe', description: 'Ethena' },
