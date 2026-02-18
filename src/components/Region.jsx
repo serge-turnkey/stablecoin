@@ -131,6 +131,26 @@ export default function Region({ onBack, onContinue }) {
               </button>
             ))}
           </div>
+          <div className="card-row">
+            {regions.slice(6, 7).map((region) => (
+              <button
+                key={region.id}
+                onClick={() => handleRegionToggle(region.id)}
+                className={`region-card ${selectedRegions.includes(region.id) ? 'selected' : ''}`}
+              >
+                <div className="region-card-content">
+                  <p className="region-card-title">
+                    {region.label}
+                  </p>
+                </div>
+                {selectedRegions.includes(region.id) && (
+                  <div className="check-icon-container visible">
+                    <img alt="" src={checkIcon} className="check-icon" />
+                  </div>
+                )}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
