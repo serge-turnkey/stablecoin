@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import arrowRightIcon from '../img/arrow-right.svg'
 import arrowLeftIcon from '../img/arrow-left.svg'
 
@@ -6,9 +6,19 @@ import arrowLeftIcon from '../img/arrow-left.svg'
 const ZAPIER_WEBHOOK_URL = import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/';
 
 export default function EmailCapture({ onBack, onContinue, formData }) {
-  const [email, setEmail] = useState('');
+  // Initialize email from formData (which is loaded from localStorage) or localStorage directly
+  const [email, setEmail] = useState(() => {
+    return formData.email || localStorage.getItem('userEmail') || '';
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState(null);
+
+  // Update email if formData.email changes (e.g., user goes back and forth)
+  useEffect(() => {
+    if (formData.email && formData.email !== email) {
+      setEmail(formData.email);
+    }
+  }, [formData.email]);
 
   const isValidEmail = (email) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -85,6 +95,8 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
         console.warn('Email submission may have failed, but continuing anyway');
       }
       
+      // Save email to localStorage
+      localStorage.setItem('userEmail', email);
       onContinue(email);
     } catch (err) {
       console.error('Error submitting email:', err);

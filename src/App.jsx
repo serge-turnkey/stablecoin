@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import UseCase from './components/UseCase'
 import Priorities from './components/Priorities'
 import Region from './components/Region'
@@ -8,13 +8,25 @@ import Results from './components/Results'
 
 function App() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [formData, setFormData] = useState({
-    useCase: null,
-    priorities: null,
-    region: null,
-    stablecoin: null,
-    email: null,
+  
+  // Initialize formData from localStorage if available
+  const [formData, setFormData] = useState(() => {
+    const savedEmail = localStorage.getItem('userEmail');
+    return {
+      useCase: null,
+      priorities: null,
+      region: null,
+      stablecoin: null,
+      email: savedEmail || null,
+    };
   });
+
+  // Save email to localStorage whenever it changes
+  useEffect(() => {
+    if (formData.email) {
+      localStorage.setItem('userEmail', formData.email);
+    }
+  }, [formData.email]);
 
   const handleUseCaseContinue = (useCase) => {
     setFormData(prev => ({ ...prev, useCase }));
@@ -38,6 +50,7 @@ function App() {
 
   const handleEmailContinue = (email) => {
     setFormData(prev => ({ ...prev, email }));
+    localStorage.setItem('userEmail', email);
     setCurrentStep(6); // Go to Results
   };
 
