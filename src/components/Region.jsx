@@ -150,6 +150,8 @@ export default function Region({ onBack, onContinue }) {
                 )}
               </button>
             ))}
+            {/* Transparent placeholder to even out the row */}
+            <div className="region-card region-card-placeholder"></div>
           </div>
         </div>
       </div>
