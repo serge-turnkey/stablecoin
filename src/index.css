@@ -941,6 +941,7 @@ button p {
   .card-row {
     flex-direction: column !important;
     gap: 12px !important;
+    align-items: stretch !important;
   }
   
   .use-case-card {
@@ -952,6 +953,7 @@ button p {
     width: 100% !important;
     flex: none !important;
     height: 70px !important;
+    max-width: none !important;
   }
   
   .region-card-placeholder {
