@@ -260,6 +260,7 @@ button p {
   border: 2px solid transparent;
   cursor: pointer;
   transition: all 0.2s;
+  max-width: calc(50% - 12px);
 }
 
 .region-card:hover {
