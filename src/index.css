@@ -954,6 +954,10 @@ button p {
     height: 70px !important;
   }
   
+  .region-card-placeholder {
+    display: none !important;
+  }
+  
   .footer {
     padding: 20px !important;
   }
