@@ -4,8 +4,8 @@ import arrowLeftIcon from '../img/arrow-left.svg'
 
 // Zapier webhook URLs - configurable via environment variables
 const ZAPIER_WEBHOOKS = [
-  import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/',
-  'https://hooks.zapier.com/hooks/catch/26138702/ux9lul1/'
+  { name: 'Webhook 1 (uqd6uh3)', url: import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/' },
+  { name: 'Webhook 2 (ux9lul1)', url: 'https://hooks.zapier.com/hooks/catch/26138702/ux9lul1/' }
 ];
 
 export default function EmailCapture({ onBack, onContinue, formData }) {
@@ -40,12 +40,14 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
       // Submit email to multiple Zapier webhooks in parallel
       console.log('Sending email to', ZAPIER_WEBHOOKS.length, 'Zapier webhooks');
       console.log('Sending email value:', email);
+      console.log('Webhooks:', ZAPIER_WEBHOOKS.map(w => w.name).join(', '));
       
       // Send to all webhooks in parallel with Promise.allSettled for resilience
-      const webhookPromises = ZAPIER_WEBHOOKS.map(async (webhookUrl, index) => {
+      const webhookPromises = ZAPIER_WEBHOOKS.map(async (webhook, index) => {
+        console.log(`Starting ${webhook.name}...`);
         try {
           // Try with normal fetch first (JSON)
-          const response = await fetch(webhookUrl, {
+          const response = await fetch(webhook.url, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
@@ -55,26 +57,26 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
             }),
           });
           
-          console.log(`Webhook ${index + 1} response status:`, response.status);
+          console.log(`${webhook.name} response status:`, response.status);
           
           if (response.ok) {
             try {
               const result = await response.json();
-              console.log(`Webhook ${index + 1} response:`, result);
+              console.log(`${webhook.name} response:`, result);
             } catch (e) {
-              console.log(`Webhook ${index + 1} response was not JSON, but status was OK`);
+              console.log(`${webhook.name} response was not JSON, but status was OK`);
             }
           }
           
-          return { success: true, webhook: index + 1 };
+          return { success: true, name: webhook.name };
         } catch (corsError) {
           // If CORS fails, try with form-encoded data (more compatible with Zapier)
-          console.warn(`Webhook ${index + 1} CORS error, trying form-encoded data`);
+          console.warn(`${webhook.name} CORS error, trying form-encoded data`);
           try {
             const formData = new URLSearchParams();
             formData.append('email', email);
             
-            await fetch(webhookUrl, {
+            await fetch(webhook.url, {
               method: 'POST',
               mode: 'no-cors',
               headers: {
@@ -82,11 +84,11 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
               },
               body: formData.toString(),
             });
-            console.log(`Webhook ${index + 1} sent via no-cors mode with form data`);
-            return { success: true, webhook: index + 1 };
+            console.log(`${webhook.name} sent via no-cors mode with form data`);
+            return { success: true, name: webhook.name };
           } catch (noCorsError) {
-            console.error(`Webhook ${index + 1} failed even with no-cors mode:`, noCorsError);
-            return { success: false, webhook: index + 1, error: noCorsError };
+            console.error(`${webhook.name} failed even with no-cors mode:`, noCorsError);
+            return { success: false, name: webhook.name, error: noCorsError };
           }
         }
       });
@@ -94,7 +96,16 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
       // Wait for all webhooks to complete (or fail)
       const results = await Promise.allSettled(webhookPromises);
       
-      // Log results
+      // Log detailed results
+      console.log('All webhook results:', results);
+      results.forEach((result, index) => {
+        if (result.status === 'fulfilled') {
+          console.log(`✓ ${ZAPIER_WEBHOOKS[index].name}: ${result.value.success ? 'SUCCESS' : 'FAILED'}`);
+        } else {
+          console.error(`✗ ${ZAPIER_WEBHOOKS[index].name}: REJECTED -`, result.reason);
+        }
+      });
+      
       const successCount = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
       console.log(`Successfully sent to ${successCount}/${ZAPIER_WEBHOOKS.length} webhooks`);
 
