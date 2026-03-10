@@ -2,8 +2,11 @@ import { useState, useEffect } from 'react'
 import arrowRightIcon from '../img/arrow-right.svg'
 import arrowLeftIcon from '../img/arrow-left.svg'
 
-// Zapier webhook URL - configurable via environment variable
-const ZAPIER_WEBHOOK_URL = import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/';
+// Zapier webhook URLs - configurable via environment variables
+const ZAPIER_WEBHOOKS = [
+  import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/',
+  'https://hooks.zapier.com/hooks/catch/26138702/ux9lul1/'
+];
 
 export default function EmailCapture({ onBack, onContinue, formData }) {
   // Initialize email from formData (which is loaded from localStorage) or localStorage directly
@@ -34,45 +37,16 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
     setError(null);
 
     try {
-      // Submit email directly to Zapier webhook
-      // Using no-cors mode to avoid CORS issues (we can't read response, but request will be sent)
-      console.log('Sending email to Zapier webhook:', ZAPIER_WEBHOOK_URL);
+      // Submit email to multiple Zapier webhooks in parallel
+      console.log('Sending email to', ZAPIER_WEBHOOKS.length, 'Zapier webhooks');
       console.log('Sending email value:', email);
       
-      let emailSent = false;
-      
-      // Try with normal fetch first
-      try {
-        const response = await fetch(ZAPIER_WEBHOOK_URL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            email: email
-          }),
-        });
-        
-        console.log('Zapier webhook response status:', response.status);
-        emailSent = true;
-        
-        if (response.ok) {
-          try {
-            const result = await response.json();
-            console.log('Zapier webhook response:', result);
-          } catch (e) {
-            console.log('Response was not JSON, but status was OK');
-          }
-        } else {
-          console.warn('Zapier webhook returned non-OK status:', response.status);
-        }
-      } catch (corsError) {
-        // If CORS fails, try with no-cors mode (request will be sent but we can't read response)
-        console.warn('CORS error, trying no-cors mode:', corsError);
+      // Send to all webhooks in parallel with Promise.allSettled for resilience
+      const webhookPromises = ZAPIER_WEBHOOKS.map(async (webhookUrl, index) => {
         try {
-          await fetch(ZAPIER_WEBHOOK_URL, {
+          // Try with normal fetch first
+          const response = await fetch(webhookUrl, {
             method: 'POST',
-            mode: 'no-cors',
             headers: {
               'Content-Type': 'application/json',
             },
@@ -80,21 +54,50 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
               email: email
             }),
           });
-          console.log('Email sent via no-cors mode (response not readable, but request was sent)');
-          emailSent = true;
-        } catch (noCorsError) {
-          console.error('Failed to send email even with no-cors mode:', noCorsError);
+          
+          console.log(`Webhook ${index + 1} response status:`, response.status);
+          
+          if (response.ok) {
+            try {
+              const result = await response.json();
+              console.log(`Webhook ${index + 1} response:`, result);
+            } catch (e) {
+              console.log(`Webhook ${index + 1} response was not JSON, but status was OK`);
+            }
+          }
+          
+          return { success: true, webhook: index + 1 };
+        } catch (corsError) {
+          // If CORS fails, try with no-cors mode
+          console.warn(`Webhook ${index + 1} CORS error, trying no-cors mode`);
+          try {
+            await fetch(webhookUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                email: email
+              }),
+            });
+            console.log(`Webhook ${index + 1} sent via no-cors mode`);
+            return { success: true, webhook: index + 1 };
+          } catch (noCorsError) {
+            console.error(`Webhook ${index + 1} failed even with no-cors mode:`, noCorsError);
+            return { success: false, webhook: index + 1, error: noCorsError };
+          }
         }
-      }
+      });
+
+      // Wait for all webhooks to complete (or fail)
+      const results = await Promise.allSettled(webhookPromises);
+      
+      // Log results
+      const successCount = results.filter(r => r.status === 'fulfilled' && r.value.success).length;
+      console.log(`Successfully sent to ${successCount}/${ZAPIER_WEBHOOKS.length} webhooks`);
 
       // Always continue to results (graceful degradation)
-      // Even if email submission failed, allow user to proceed
-      if (emailSent) {
-        console.log('Email submission attempted successfully');
-      } else {
-        console.warn('Email submission may have failed, but continuing anyway');
-      }
-      
       // Save email to localStorage
       localStorage.setItem('userEmail', email);
       onContinue(email);
