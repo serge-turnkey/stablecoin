@@ -44,7 +44,7 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
       // Send to all webhooks in parallel with Promise.allSettled for resilience
       const webhookPromises = ZAPIER_WEBHOOKS.map(async (webhookUrl, index) => {
         try {
-          // Try with normal fetch first
+          // Try with normal fetch first (JSON)
           const response = await fetch(webhookUrl, {
             method: 'POST',
             headers: {
@@ -68,20 +68,21 @@ export default function EmailCapture({ onBack, onContinue, formData }) {
           
           return { success: true, webhook: index + 1 };
         } catch (corsError) {
-          // If CORS fails, try with no-cors mode
-          console.warn(`Webhook ${index + 1} CORS error, trying no-cors mode`);
+          // If CORS fails, try with form-encoded data (more compatible with Zapier)
+          console.warn(`Webhook ${index + 1} CORS error, trying form-encoded data`);
           try {
+            const formData = new URLSearchParams();
+            formData.append('email', email);
+            
             await fetch(webhookUrl, {
               method: 'POST',
               mode: 'no-cors',
               headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
               },
-              body: JSON.stringify({
-                email: email
-              }),
+              body: formData.toString(),
             });
-            console.log(`Webhook ${index + 1} sent via no-cors mode`);
+            console.log(`Webhook ${index + 1} sent via no-cors mode with form data`);
             return { success: true, webhook: index + 1 };
           } catch (noCorsError) {
             console.error(`Webhook ${index + 1} failed even with no-cors mode:`, noCorsError);
