@@ -46,58 +46,27 @@ export default function EmailCapture({ onBack, onContinue, formData, utmMedium }
       // Send to all webhooks in parallel with Promise.allSettled for resilience
       const webhookPromises = ZAPIER_WEBHOOKS.map(async (webhook, index) => {
         console.log(`Starting ${webhook.name}...`);
+        
         try {
-          // Prepare payload with email and UTM medium
-          const payload = {
-            email: email,
-            utm_medium: utmMedium || null
-          };
+          // Build URL with query parameters (more reliable for no-cors mode)
+          const params = new URLSearchParams();
+          params.append('email', email);
+          if (utmMedium) params.append('utm_medium', utmMedium);
           
-          // Try with normal fetch first (JSON)
-          const response = await fetch(webhook.url, {
+          const urlWithParams = `${webhook.url}?${params.toString()}`;
+          console.log(`${webhook.name} URL:`, urlWithParams);
+          
+          // Send POST request with data in URL (works best with Zapier)
+          const response = await fetch(urlWithParams, {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(payload),
+            mode: 'no-cors', // Use no-cors from the start for reliability
           });
           
-          console.log(`${webhook.name} response status:`, response.status);
-          
-          if (response.ok) {
-            try {
-              const result = await response.json();
-              console.log(`${webhook.name} response:`, result);
-            } catch (e) {
-              console.log(`${webhook.name} response was not JSON, but status was OK`);
-            }
-          }
-          
+          console.log(`${webhook.name} request sent successfully`);
           return { success: true, name: webhook.name };
-        } catch (corsError) {
-          // If CORS fails, try with form-encoded data (more compatible with Zapier)
-          console.warn(`${webhook.name} CORS error, trying form-encoded data`);
-          try {
-            const formData = new URLSearchParams();
-            formData.append('email', email);
-            
-            // Add UTM medium to form data
-            if (utmMedium) formData.append('utm_medium', utmMedium);
-            
-            await fetch(webhook.url, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: formData.toString(),
-            });
-            console.log(`${webhook.name} sent via no-cors mode with form data + UTM medium`);
-            return { success: true, name: webhook.name };
-          } catch (noCorsError) {
-            console.error(`${webhook.name} failed even with no-cors mode:`, noCorsError);
-            return { success: false, name: webhook.name, error: noCorsError };
-          }
+        } catch (error) {
+          console.error(`${webhook.name} failed:`, error);
+          return { success: false, name: webhook.name, error: error };
         }
       });
 
