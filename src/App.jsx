@@ -9,6 +9,28 @@ import Results from './components/Results'
 function App() {
   const [currentStep, setCurrentStep] = useState(1);
   
+  // Capture UTM parameters from URL on app load
+  const [utmParams] = useState(() => {
+    const params = new URLSearchParams(window.location.search);
+    const utms = {
+      utm_source: params.get('utm_source') || null,
+      utm_medium: params.get('utm_medium') || null,
+      utm_campaign: params.get('utm_campaign') || null,
+      utm_term: params.get('utm_term') || null,
+      utm_content: params.get('utm_content') || null
+    };
+    
+    // Log captured UTMs for debugging
+    const hasUtms = Object.values(utms).some(v => v !== null);
+    if (hasUtms) {
+      console.log('UTM parameters captured:', utms);
+    } else {
+      console.log('No UTM parameters in URL');
+    }
+    
+    return utms;
+  });
+  
   // Initialize formData from localStorage if available
   const [formData, setFormData] = useState(() => {
     const savedEmail = localStorage.getItem('userEmail');
@@ -103,6 +125,7 @@ function App() {
           onBack={handleBack}
           onContinue={handleEmailContinue}
           formData={formData}
+          utmParams={utmParams}
         />
       )}
       {currentStep === 6 && (
