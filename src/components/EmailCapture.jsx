@@ -8,7 +8,7 @@ const ZAPIER_WEBHOOKS = [
   { name: 'Webhook 2 (ux9lul1)', url: 'https://hooks.zapier.com/hooks/catch/26138702/ux9lul1/' }
 ];
 
-export default function EmailCapture({ onBack, onContinue, formData, utmParams }) {
+export default function EmailCapture({ onBack, onContinue, formData, utmMedium }) {
   // Initialize email from formData (which is loaded from localStorage) or localStorage directly
   const [email, setEmail] = useState(() => {
     return formData.email || localStorage.getItem('userEmail') || '';
@@ -40,21 +40,17 @@ export default function EmailCapture({ onBack, onContinue, formData, utmParams }
       // Submit email to multiple Zapier webhooks in parallel
       console.log('Sending email to', ZAPIER_WEBHOOKS.length, 'Zapier webhooks');
       console.log('Sending email value:', email);
-      console.log('Sending UTM parameters:', utmParams);
+      console.log('Sending UTM medium:', utmMedium);
       console.log('Webhooks:', ZAPIER_WEBHOOKS.map(w => w.name).join(', '));
       
       // Send to all webhooks in parallel with Promise.allSettled for resilience
       const webhookPromises = ZAPIER_WEBHOOKS.map(async (webhook, index) => {
         console.log(`Starting ${webhook.name}...`);
         try {
-          // Prepare payload with email and UTM parameters
+          // Prepare payload with email and UTM medium
           const payload = {
             email: email,
-            utm_source: utmParams?.utm_source || null,
-            utm_medium: utmParams?.utm_medium || null,
-            utm_campaign: utmParams?.utm_campaign || null,
-            utm_term: utmParams?.utm_term || null,
-            utm_content: utmParams?.utm_content || null
+            utm_medium: utmMedium || null
           };
           
           // Try with normal fetch first (JSON)
@@ -85,12 +81,8 @@ export default function EmailCapture({ onBack, onContinue, formData, utmParams }
             const formData = new URLSearchParams();
             formData.append('email', email);
             
-            // Add UTM parameters to form data
-            if (utmParams?.utm_source) formData.append('utm_source', utmParams.utm_source);
-            if (utmParams?.utm_medium) formData.append('utm_medium', utmParams.utm_medium);
-            if (utmParams?.utm_campaign) formData.append('utm_campaign', utmParams.utm_campaign);
-            if (utmParams?.utm_term) formData.append('utm_term', utmParams.utm_term);
-            if (utmParams?.utm_content) formData.append('utm_content', utmParams.utm_content);
+            // Add UTM medium to form data
+            if (utmMedium) formData.append('utm_medium', utmMedium);
             
             await fetch(webhook.url, {
               method: 'POST',
@@ -100,7 +92,7 @@ export default function EmailCapture({ onBack, onContinue, formData, utmParams }
               },
               body: formData.toString(),
             });
-            console.log(`${webhook.name} sent via no-cors mode with form data + UTMs`);
+            console.log(`${webhook.name} sent via no-cors mode with form data + UTM medium`);
             return { success: true, name: webhook.name };
           } catch (noCorsError) {
             console.error(`${webhook.name} failed even with no-cors mode:`, noCorsError);
