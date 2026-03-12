@@ -8,7 +8,7 @@ const ZAPIER_WEBHOOKS = [
   { name: 'Webhook 2 (ux9lul1)', url: 'https://hooks.zapier.com/hooks/catch/26138702/ux9lul1/' }
 ];
 
-export default function EmailCapture({ onBack, onContinue, formData, utmMedium }) {
+export default function EmailCapture({ onBack, onContinue, formData, utmParams }) {
   // Initialize email from formData (which is loaded from localStorage) or localStorage directly
   const [email, setEmail] = useState(() => {
     return formData.email || localStorage.getItem('userEmail') || '';
@@ -40,7 +40,7 @@ export default function EmailCapture({ onBack, onContinue, formData, utmMedium }
       // Submit email to multiple Zapier webhooks in parallel
       console.log('Sending email to', ZAPIER_WEBHOOKS.length, 'Zapier webhooks');
       console.log('Sending email value:', email);
-      console.log('Sending UTM medium:', utmMedium);
+      console.log('Sending UTM parameters:', utmParams);
       console.log('Webhooks:', ZAPIER_WEBHOOKS.map(w => w.name).join(', '));
       
       // Send to all webhooks in parallel with Promise.allSettled for resilience
@@ -51,7 +51,9 @@ export default function EmailCapture({ onBack, onContinue, formData, utmMedium }
           // Build URL with query parameters (more reliable for no-cors mode)
           const params = new URLSearchParams();
           params.append('email', email);
-          if (utmMedium) params.append('utm_medium', utmMedium);
+          if (utmParams?.utm_source) params.append('utm_source', utmParams.utm_source);
+          if (utmParams?.utm_medium) params.append('utm_medium', utmParams.utm_medium);
+          if (utmParams?.utm_campaign) params.append('utm_campaign', utmParams.utm_campaign);
           
           const urlWithParams = `${webhook.url}?${params.toString()}`;
           console.log(`${webhook.name} URL:`, urlWithParams);
