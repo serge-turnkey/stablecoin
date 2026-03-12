@@ -48,28 +48,23 @@ export default function EmailCapture({ onBack, onContinue, formData, utmParams }
         console.log(`Starting ${webhook.name}...`);
         
         try {
-          // Build form data for request body
-          const formData = new URLSearchParams();
-          formData.append('email', email);
-          if (utmParams?.utm_source) formData.append('utm_source', utmParams.utm_source);
-          if (utmParams?.utm_medium) formData.append('utm_medium', utmParams.utm_medium);
-          if (utmParams?.utm_campaign) formData.append('utm_campaign', utmParams.utm_campaign);
+          // Build URL with query parameters only (clean single-source approach)
+          const params = new URLSearchParams();
+          params.append('email', email);
+          if (utmParams?.utm_source) params.append('utm_source', utmParams.utm_source);
+          if (utmParams?.utm_medium) params.append('utm_medium', utmParams.utm_medium);
+          if (utmParams?.utm_campaign) params.append('utm_campaign', utmParams.utm_campaign);
           
-          // Also add to URL for maximum compatibility
-          const urlWithParams = `${webhook.url}?${formData.toString()}`;
+          const urlWithParams = `${webhook.url}?${params.toString()}`;
           console.log(`${webhook.name} URL:`, urlWithParams);
           
-          // Send POST request with data in BOTH URL and body for maximum compatibility
+          // Send POST request with data only in URL parameters
           const response = await fetch(urlWithParams, {
             method: 'POST',
             mode: 'no-cors',
-            headers: {
-              'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: formData.toString(),
           });
           
-          console.log(`${webhook.name} request sent successfully (URL + body)`);
+          console.log(`${webhook.name} request sent successfully`);
           return { success: true, name: webhook.name };
         } catch (error) {
           console.error(`${webhook.name} failed:`, error);
