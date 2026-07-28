@@ -40,7 +40,7 @@ git push -u origin main
 
 Add this variable:
 - **Name:** `VITE_ZAPIER_WEBHOOK_URL`
-- **Value:** `https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/`
+- **Value:** `https://hooks.zapier.com/hooks/catch/22331591/4un25da/`
 - **Environment:** Production, Preview, Development (select all)
 
 (Optional - if you want to use direct Attio API as fallback):

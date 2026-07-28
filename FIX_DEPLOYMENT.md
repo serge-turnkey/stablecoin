@@ -33,7 +33,7 @@ If auto-deploy isn't working:
 
 1. Go to **Settings → Environment Variables**
 2. Add/Verify:
-   - `VITE_ZAPIER_WEBHOOK_URL` = `https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/`
+   - `VITE_ZAPIER_WEBHOOK_URL` = `https://hooks.zapier.com/hooks/catch/22331591/4un25da/`
    - Select all environments (Production, Preview, Development)
 3. Click **"Save"**
 

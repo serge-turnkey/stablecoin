@@ -2,10 +2,9 @@ import { useState, useEffect } from 'react'
 import arrowRightIcon from '../img/arrow-right.svg'
 import arrowLeftIcon from '../img/arrow-left.svg'
 
-// Zapier webhook URLs - configurable via environment variables
+// Zapier webhook URL - configurable via environment variables
 const ZAPIER_WEBHOOKS = [
-  { name: 'Webhook 1 (uqd6uh3)', url: import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/26138702/uqd6uh3/' },
-  { name: 'Webhook 2 (ux9lul1)', url: 'https://hooks.zapier.com/hooks/catch/26138702/ux9lul1/' }
+  { name: 'Webhook (4un25da)', url: import.meta.env.VITE_ZAPIER_WEBHOOK_URL || 'https://hooks.zapier.com/hooks/catch/22331591/4un25da/' }
 ];
 
 export default function EmailCapture({ onBack, onContinue, formData, utmParams }) {
